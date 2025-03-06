@@ -34,11 +34,16 @@ class VlogController extends AbstractController
     ];
 
     /**
-     * @Route("/", name="vlog_list")
+     * @Route("/{page}", name="vlog_list", defaults={"page": 1})
      */
-    public function list()
+    public function list($page = 1)
     {
-        return $this->json(self::POSTS);
+        return $this->json(
+            [
+                'page' => $page,
+                self::POSTS
+            ]
+        );
     }
 
     /**
