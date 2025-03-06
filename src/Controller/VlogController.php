@@ -41,7 +41,10 @@ class VlogController extends AbstractController
         return $this->json(
             [
                 'page' => $page,
-                self::POSTS
+                'data' => array_map(function ($item) {
+                    return $this->generateUrl('vlog_by_id', ['id' => $item['id']]);
+                },
+                self::POSTS)
             ]
         );
     }
