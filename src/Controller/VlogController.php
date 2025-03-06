@@ -40,6 +40,7 @@ class VlogController extends AbstractController
     public function list($page = 1, Request $request)
     {
         $limit = $request->get('limit', 10);
+        
         return $this->json(
             [
                 'page' => $page,
