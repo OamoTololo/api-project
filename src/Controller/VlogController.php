@@ -6,6 +6,7 @@ use App\Entity\VlogPost;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Serializer;
 
@@ -36,7 +37,7 @@ class VlogController extends AbstractController
     }
 
     /**
-     * @Route("/post/{id}", name="vlog_by_id", requirements={"id"="\d+"})
+     * @Route("/post/{id}", name="vlog_by_id", requirements={"id"="\d+"}, methods={"GET"})
      */
     public function post(VlogPost $post): JsonResponse
     {
@@ -44,7 +45,7 @@ class VlogController extends AbstractController
     }
 
     /**
-     * @Route("/post/{slug}", name="vlog_by_slug")
+     * @Route("/post/{slug}", name="vlog_by_slug", methods={"GET"})
      */
     public function postBySlug(VlogPost $post): JsonResponse
     {
@@ -66,5 +67,17 @@ class VlogController extends AbstractController
         $entityManager->flush();
 
         return $this->json($vlogPost);
+    }
+
+    /**
+     * @Route("/post/{id}", name="delete_vlog", methods={"DELETE"})
+     */
+    public function delete(VlogPost $post)
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->remove($post);
+        $entityManager->flush();
+
+        return $this->json(null, Response::HTTP_NO_CONTENT);
     }
 }
