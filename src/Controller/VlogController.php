@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\VlogPost;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Serializer;
@@ -16,7 +17,7 @@ class VlogController extends AbstractController
     /**
      * @Route("/{page}", name="vlog_list", defaults={"page": 1}, requirements={"page"="\d+"})
      */
-    public function list($page = 1, Request $request)
+    public function list($page = 1, Request $request): JsonResponse
     {
         $limit = $request->get('limit', 10);
         $vlogRepository = $this->getDoctrine()->getRepository(VlogPost::class);
@@ -37,23 +38,23 @@ class VlogController extends AbstractController
     /**
      * @Route("/post/{id}", name="vlog_by_id", requirements={"id"="\d+"})
      */
-    public function post($id)
+    public function post(VlogPost $post): JsonResponse
     {
-        return $this->json($this->getDoctrine()->getRepository(VlogPost::class)->find($id));
+        return $this->json($post);
     }
 
     /**
      * @Route("/post/{slug}", name="vlog_by_slug")
      */
-    public function postBySlug($slug)
+    public function postBySlug(VlogPost $post): JsonResponse
     {
-        return $this->json($this->getDoctrine()->getRepository(VlogPost::class)->findOneBy(['slug' => $slug]));
+        return $this->json($post);
     }
 
     /**
      * @Route("/add", name="add_vlog", methods={"POST"})
      */
-    public function add(Request $request)
+    public function add(Request $request): JsonResponse
     {
         /** @var Serializer $serializer */
         $serializer = $this->get('serializer');
