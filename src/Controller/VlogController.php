@@ -2,9 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\VlogPost;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Serializer;
 
 /**
  * @Route("/vlog")
@@ -35,7 +37,7 @@ class VlogController extends AbstractController
     ];
 
     /**
-     * @Route("/{page}", name="vlog_list", defaults={"page": 1})
+     * @Route("/{page}", name="vlog_list", defaults={"page": 1}, requirements={"page"="\d+"})
      */
     public function list($page = 1, Request $request)
     {
@@ -67,5 +69,22 @@ class VlogController extends AbstractController
     public function postBySlug($slug)
     {
         return $this->json(self::POSTS[array_search($slug, array_column(self::POSTS, 'slug'))]);
+    }
+
+    /**
+     * @Route("/add", name="add_vlog", methods={"POST"})
+     */
+    public function add(Request $request)
+    {
+        /** @var Serializer $serializer */
+        $serializer = $this->get('serializer');
+
+        $vlogPost = $serializer->deserialize($request->getContent(), VlogPost::class, 'json');
+
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($vlogPost);
+        $entityManager->flush();
+
+        return $this->json($vlogPost);
     }
 }
