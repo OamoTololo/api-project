@@ -13,44 +13,23 @@ use Symfony\Component\Serializer\Serializer;
  */
 class VlogController extends AbstractController
 {
-    private const POSTS = [
-        [
-            'id' => 1,
-            'slug' => 'hello-world',
-            'title' => 'Hello World',
-        ],
-        [
-            'id' => 2,
-            'slug' => 'another-post',
-            'title' => 'This is another post',
-        ],
-        [
-            'id' => 3,
-            'slug' => 'last-post',
-            'title' => 'This is the last post',
-        ],
-        [
-            'id' => 4,
-            'slug' => 'first-post',
-            'title' => 'This is the first post',
-        ]
-    ];
-
     /**
      * @Route("/{page}", name="vlog_list", defaults={"page": 1}, requirements={"page"="\d+"})
      */
     public function list($page = 1, Request $request)
     {
         $limit = $request->get('limit', 10);
+        $vlogRepository = $this->getDoctrine()->getRepository(VlogPost::class);
+        $items = $vlogRepository->findAll();
         
         return $this->json(
             [
                 'page' => $page,
                 'limit' => $limit,
-                'data' => array_map(function ($item) {
-                    return $this->generateUrl('vlog_by_slug', ['slug' => $item['slug']]);
+                'data' => array_map(function (VlogPost $item) {
+                    return $this->generateUrl('vlog_by_slug', ['slug' => $item->getSlug()]);
                 },
-                self::POSTS)
+                $items)
             ]
         );
     }
@@ -60,7 +39,7 @@ class VlogController extends AbstractController
      */
     public function post($id)
     {
-        return $this->json(self::POSTS[array_search($id, array_column(self::POSTS, 'id'))]);
+        return $this->json($this->getDoctrine()->getRepository(VlogPost::class)->find($id));
     }
 
     /**
@@ -68,7 +47,7 @@ class VlogController extends AbstractController
      */
     public function postBySlug($slug)
     {
-        return $this->json(self::POSTS[array_search($slug, array_column(self::POSTS, 'slug'))]);
+        return $this->json($this->getDoctrine()->getRepository(VlogPost::class)->findOneBy(['slug' => $slug]));
     }
 
     /**
