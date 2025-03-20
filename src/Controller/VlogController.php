@@ -56,7 +56,7 @@ class VlogController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", name="vlog_by_id", requirements={"id"="\d+"})
+     * @Route("/post/{id}", name="vlog_by_id", requirements={"id"="\d+"})
      */
     public function post($id)
     {
@@ -64,7 +64,7 @@ class VlogController extends AbstractController
     }
 
     /**
-     * @Route("/{slug}", name="vlog_by_slug")
+     * @Route("/post/{slug}", name="vlog_by_slug")
      */
     public function postBySlug($slug)
     {
